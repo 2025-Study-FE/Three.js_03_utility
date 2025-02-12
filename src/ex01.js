@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import Stats from "stats.js";
+import dat from "dat.gui";
 
-// ----- 주제: 초당 프레임 수 보기(Stats)
+// ----- GUI 컨트롤
 
 export default function example() {
   // Renderer
@@ -39,9 +39,13 @@ export default function example() {
   const mesh = new THREE.Mesh(geometry, material);
   scene.add(mesh);
 
-  // Stats
-  const stats = new Stats(); // 콘솔에서 찍는 방식은 컴퓨터에 부하가 가기 때문에 Stats를 사용하는 것이 더 정확하다.
-  document.body.appendChild(stats.domElement);
+  // Dat GUI
+  const gui = new dat.GUI();
+  // 조정할 오브젝트 요소, 조정할 요소의 속성, 조정할 범위의 최솟값과 최대값, 조정 단위(스텝)
+  // name을 작성하지 않으면 속성값으로 설정된다.
+  gui.add(mesh.position, "y", -5, 5, 0.01).name("y의 위치");
+  gui.add(mesh.position, "z").min(-10).max(3).step(0.01).name("메쉬의 z 위치");
+  gui.add(camera.position, "x", -10, 10, 0.01).name("카메라 x값");
 
   // 그리기
   const clock = new THREE.Clock();
@@ -49,8 +53,9 @@ export default function example() {
   function draw() {
     const time = clock.getElapsedTime();
 
-    stats.update(); // 프레임 수가 떨어지면 많이 버벅인다는 뜻이다.
     mesh.rotation.y = time;
+
+    camera.lookAt(mesh.position);
 
     renderer.render(scene, camera);
     renderer.setAnimationLoop(draw);
