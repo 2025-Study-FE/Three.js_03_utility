@@ -1,6 +1,7 @@
 import * as THREE from "three";
+import Stats from "stats.js";
 
-// ----- 주제: AxesHelper, GridHelper
+// ----- 주제: 초당 프레임 수 보기(Stats)
 
 export default function example() {
   // Renderer
@@ -17,9 +18,8 @@ export default function example() {
 
   // Camera
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.x = 1;
-  camera.position.y = 3;
-  camera.position.z = 0;
+  camera.position.y = 1;
+  camera.position.z = 5;
   scene.add(camera);
 
   // Light
@@ -31,25 +31,17 @@ export default function example() {
   directionalLight.position.z = 2;
   scene.add(directionalLight);
 
-  // AxesHelper
-  const axesHelper = new THREE.AxesHelper(3); // 축의 기본 사이즈는 1이다.
-  scene.add(axesHelper);
-
-  // GridHelper
-  const gridHelper = new THREE.GridHelper(5); // 그리드의 기본 사이즈는 10이다.
-  scene.add(gridHelper);
-
   // Mesh
   const geometry = new THREE.BoxGeometry(1, 1, 1);
   const material = new THREE.MeshStandardMaterial({
     color: "seagreen",
   });
   const mesh = new THREE.Mesh(geometry, material);
-  mesh.position.x = 2;
-  mesh.position.y = 1;
   scene.add(mesh);
 
-  camera.lookAt(mesh.position);
+  // Stats
+  const stats = new Stats(); // 콘솔에서 찍는 방식은 컴퓨터에 부하가 가기 때문에 Stats를 사용하는 것이 더 정확하다.
+  document.body.appendChild(stats.domElement);
 
   // 그리기
   const clock = new THREE.Clock();
@@ -57,6 +49,7 @@ export default function example() {
   function draw() {
     const time = clock.getElapsedTime();
 
+    stats.update(); // 프레임 수가 떨어지면 많이 버벅인다는 뜻이다.
     mesh.rotation.y = time;
 
     renderer.render(scene, camera);
